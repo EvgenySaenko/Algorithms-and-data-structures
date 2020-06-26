@@ -49,7 +49,6 @@ public class SimpleAlgorithms {
     }
 
     //Нахождение среднего ариметического массива
-
     public static void main(String[] args) {
         System.out.println( exp(2,9));
 
