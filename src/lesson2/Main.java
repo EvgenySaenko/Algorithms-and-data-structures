@@ -20,13 +20,18 @@ public class Main {
         Array arr55 = new Array(12,8,45,4,1,12,2,24,8,45,7,15,10,3,44,6,11,16,19,25,33,13,17,65,34,98,67,9,19);
         System.out.println(arr55.length());
 
+        //System.out.println("удалим массив, вернет - " + arr55.deleteAll());
 
 
 
 
 
-        System.out.println("O большое BubbleSort = " + arr55.bubbleSort());
-        System.out.println(arr55.toString());
+
+//        System.out.println("O большое BubbleSort = " + arr55.bubbleSort());
+//        System.out.println(arr55.toString());
+
+        System.out.println("O большое bubbleSortEvenOdd = " + arr77.bubbleSortOptimize());
+        System.out.println(arr77.toString());
 
 //        System.out.println("O большое sortInsert = " + arr77.sortInsert());
 //
