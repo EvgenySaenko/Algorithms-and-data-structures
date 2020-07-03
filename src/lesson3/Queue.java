@@ -55,5 +55,4 @@ public class Queue {
         items--;
         return queue[head++];
     }
-
 }
