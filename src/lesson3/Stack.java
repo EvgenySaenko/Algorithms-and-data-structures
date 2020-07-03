@@ -40,4 +40,22 @@ public class Stack {
     public int peek(){
         return stack[head];
     }
+
+    @Override
+    public String toString() {
+        if (stack == null) return "null";
+        int iMax = stack.length - 1;
+        if (iMax == -1) return "[]";
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        int i = 0;
+        while (true) {
+            b.append(stack[i]);
+            if (i == iMax)
+                return b.append(']').toString();
+            b.append(", ");
+            i++;
+        }
+    }
 }
