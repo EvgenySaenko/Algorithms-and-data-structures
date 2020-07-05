@@ -1,6 +1,7 @@
 package lesson2;
 
 import lesson3.Deque;
+import lesson3.Queue;
 import lesson3.Reverse;
 import lesson3.Stack;
 
@@ -51,7 +52,17 @@ public class Main {
         deque.insertInTail(5);
         System.out.println(deque.removeFromHead());
         System.out.println(deque.removeFromHead());
-        System.out.println(deque.removeFromHead());
+        System.out.println();
+        Queue queue = new Queue(10);
+        queue.insert(10);
+        queue.insert(20);
+        queue.insert(30);
+        queue.insert(40);
+        queue.insert(50);
+        queue.insert(60);
+        queue.insert(70);
+
+
 
 
 

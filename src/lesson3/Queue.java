@@ -18,6 +18,46 @@ public class Queue {
         items = 0;
     }
 
+    public int getSize() {
+        return capacity;
+    }
+
+    public void setSize(int size) {
+        this.capacity = size;
+    }
+
+    public int[] getQueue() {
+        return queue;
+    }
+
+    public void setQueue(int[] queue) {
+        this.queue = queue;
+    }
+
+    public int getHead() {
+        return head;
+    }
+
+    public void setHead(int head) {
+        this.head = head;
+    }
+
+    public int getTail() {
+        return tail;
+    }
+
+    public void setTail(int tail) {
+        this.tail = tail;
+    }
+
+    public int getItems() {
+        return items;
+    }
+
+    public void setItems(int items) {
+        this.items = items;
+    }
+
     public boolean isEmpty(){
         return items == 0;
     }
