@@ -2,6 +2,7 @@ package lesson4;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class RelatedList {
@@ -44,7 +45,7 @@ public class RelatedList {
     }
 
     public void push(Cat c){
-        Node n = new Node(c);//содали ноду, положили кота в нее
+        Node n = new Node(c);//создали ноду, положили кота в нее
         n.next = head;
         head = n;
     }
@@ -103,5 +104,6 @@ public class RelatedList {
         }
         return true;
     }
+
 
 }
