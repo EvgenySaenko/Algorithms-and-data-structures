@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
 
         DoublyLinkedList<String> dl = new DoublyLinkedList<>();
-        dl.pushHead("data1");
+        dl.push("data1");
 
 
         System.out.println(dl.toString());
@@ -20,9 +20,9 @@ public class Main {
 
 
 
-        //System.out.println("текущий элемент - "+ iter.next());
+//        System.out.println("текущий элемент - "+ iter.next());
 //        System.out.println(iter.hasNext());
-//        System.out.println(iter.atEnd());
+//       System.out.println(iter.atEnd());
 
 
     }

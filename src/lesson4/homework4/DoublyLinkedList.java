@@ -1,6 +1,8 @@
 package lesson4.homework4;
 
 
+import lesson4.rightHomeWork.DoubleRelatedList;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -11,12 +13,6 @@ public class DoublyLinkedList<T>{
         Node<T> prev;
         Node<T> next;
         T data;
-
-        public Node() {
-            this.data = null;
-            this.next = null;
-            this.prev = null;
-        }
 
         public Node(T data) {
             this.data = data;
@@ -38,9 +34,9 @@ public class DoublyLinkedList<T>{
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node node = (Node) o;
-            return data.equals(node.data);
+            if (!(o instanceof Node)) return false;
+            Node <?> node = (Node<?>) o;
+            return Objects.equals(data, node.data);
         }
 
         @Override
@@ -49,7 +45,8 @@ public class DoublyLinkedList<T>{
         }
     }
 
-    private Node head, tail;
+    private Node<T> head;
+    private Node<T> tail;
     private int size;
 
     DoublyLinkedList(){
@@ -59,71 +56,102 @@ public class DoublyLinkedList<T>{
     }
 
     public boolean isEmpty(){
-        return size == 0;
+        return head == null;
     }
+
     public int getSize(){
         return size;
     }
 
-    public void pushHead(T data){
-        if (isEmpty()){
-            tail = new Node<>(data);
-            head = tail;
-            size++;
-            System.out.println("добавлен "+ size + " элемент " + tail);
-            System.out.println("хвост содержит " + tail+"\n");
-        }else if(size == 1){
-            head = new Node<T>(data);
-            System.out.println("голова содержит тоже что и хвост " + head);
-            size++;
-            System.out.println("добавлен "+ size + " элемент " + head +"\n");
-            head.next = tail;
-            tail.prev = head;
-            System.out.println("head.next = " + head.next);
+    public void push(T data) {
+        Node n = new Node<>(data);
+        //сразу некст ссылается на голову, если нет то станет нулем, если есть то норм
+        n.next = head; // if (head == null) n.next = null;
+        if (head == null) {//если головы нет то хвост это новый элемент
+            tail = n;
+        } else {
+            head.prev = n;//если голова есть то , то ее прев ссылается но новый
         }
-        else {// в другом случае => если голова и хвост уже есть
-            Node<T> current = new Node<>(data);//головой становится новый элемент и в некст записывает ссылку на старую голову
-            current.next = head;
-            head = current;
-            size++;
-            System.out.println("добавлен "+ size + " элемент " + current +"\n");
-
-            System.out.println("head => "+ head);
-            System.out.println("tail => "+ tail);
-        }
+        head = n;//вконце головой становится новый элемент всегда
+        size++;
     }
 
-    public T popHead(){//при удалении возвращаем данные лежащие в хэде, и делаем хедом=> next элемент
+    public T pop() {
         if (isEmpty()) return null;
-        T tamp = (T) head.data;//сохраняем данные во временную переменную
-        head = head.next;//смещаем head вправо
+        T data = tail.data;//достаем данные
+        if (tail.prev != null) {//значит у нас не один элемент
+            tail.prev.next = null;//переключаемся на него, на элемент слева от хвоста,его некстовую ссылку зануляем, то есть он больше не видит хвост
+            tail = tail.prev;//хвостом становится, адрес на который указывал prev.хвоста
+        } else {//если tail.prev null то у нас всего 1 элемент просто удалем его
+            tail = null;//затирая ссылки в ноль
+            head = null;
+        }
         size--;
-        return tamp;
+        return data;//возвращаем данные которые удалили
+    }
+
+    public boolean contains(T data) {
+        Node<T> n = new Node<>(data);
+        Node<T> current = head;
+        while (!current.equals(n)) {
+            if (current.next == null) return false;
+            else current = current.next;
+        }
+        return true;
+    }
+
+    public T delete(T data) {
+        Node<T> n = new Node<>(data);
+        Node<T> current = head;
+        Node<T> previous = head;
+
+        while (!current.equals(n)) {
+            if (current.next == null) return null;
+            else {
+                previous = current;
+                current = current.next;
+            }
+        }
+        if (current == head && current == tail) {
+            head = null;
+            tail = null;
+        } else if (current == head) {
+            head.next.prev = null;
+            head = head.next;
+        } else if (current == tail) {
+            tail.prev.next = null;
+            tail = tail.prev;
+        } else {
+            previous.next = current.next;
+            current.next.prev = previous;
+        }
+        size--;
+        return current.data;
     }
 
     @Override
     public String toString() {
+        if (isEmpty()) return "[]";
         Node current = head;
         StringBuilder sb = new StringBuilder("[");
         while(current != null){
             sb.append(current);//добавляем инфу о текущем узле
             current = current.next;//переключаемся
-            System.out.println(sb);
             sb.append((current == null) ? "]" : ",");//если переключились в нулевой узел закрываем скобку
         }
         return sb.toString();
     }
     private class LinkedListIterator implements IteratorForDoublyLinkedList<T>{
 
-        private Node current;
+        private Node<T> current;
 
         LinkedListIterator(){
             this.current = head;
         }
 
         @Override
-        public void reset() {//устанавливает себя на голову списка
-            this.current = head;
+        public void reset(){//устанавливает себя на голову списка
+                this.current = head;
         }
 
         @Override
@@ -139,7 +167,7 @@ public class DoublyLinkedList<T>{
 
         @Override
         public boolean hasNext() {//проверяет есть ли следующий элемент
-            if (size ==1){
+            if (current.next == null){
                 return false;
             }
             return (current != null);
@@ -149,94 +177,72 @@ public class DoublyLinkedList<T>{
         public boolean atEnd() { //проверяет находимся ли в конце списка(true or false)
             return current.next == null;
         }
+        @Override
+        public boolean atBegin() {
+            return current.prev == null;
+        }
 
         @Override
         public void insertAfter(T data) {//добавляет после текущего элемента
-            Node<T> freeItem = null;//свободный элемент
-            Node<T> bindingItem =  new Node<T>(data);//создали новый элемент без ссылки;//связующий элемент
-            //T temp = null;
-            if (isEmpty()){
-                throw new NoSuchElementException("Список пуст, нет элементов после которых вы могли бы вставить свой");
-            }else if(size == 1){
-                // при создании итератора как мы знаем он указывает на голову  this.current = head;
-                tail = new Node<T>(data);//t.k елемент у нас 1, новый элемент встает за ним и становится хвостом
-                head.next = tail; //след за головой становится новый элемент = он же хвост
-                tail.prev = head;
-                System.out.println("вставленный элемент = " + tail);
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + tail +"\n");
-                System.out.println("head = "+ head +" "+ tail + " = tail");
+            Node<T> temp = new Node<>(data);
+            if (!atEnd()) {
+                temp.next = current.next;
+                current.next.prev = temp;
+                System.out.println("temp.next " + temp.next);
+                System.out.println("current.next.prev " + current.next.prev);
+            } else {
+                tail = temp;
+                System.out.println("tail " + tail);
             }
-            else if(size == 2) {// в другом случае => если голова и хвост уже есть
-                head.next = bindingItem;
-                bindingItem.prev = head;
-                bindingItem.next = tail;
-                tail.prev = bindingItem;
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + bindingItem +"\n");
+            current.next = temp;
+            temp.prev = current;
+            size++;
 
-                System.out.println("head => "+ head);
-                System.out.println("bindingItem => " + bindingItem);
-                System.out.println("tail => "+ tail);
-            }else {
-                System.out.println("мы сюда попали");
-                freeItem = bindingItem;//новый становится старым дата3
-                Node<T> newNode = new Node<>(data);//data4
-                newNode.prev = head;
-                head.next = newNode;
-                newNode.prev = freeItem;
-                freeItem.prev = newNode;
-                freeItem.next = tail;
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + freeItem +"\n");
-
-                System.out.println("head => "+ head);
-                System.out.println("freeItem => " + freeItem);
-                System.out.println("bindingItem => "+ bindingItem);
-
-                System.out.println("tail => "+ tail);
-
-            }
         }
 
         @Override
-        public void insertBefore(T data) { //добавляет перед текущим элементом
-            if (isEmpty()){
-                tail = new Node<>(data);
-                head = tail;
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + tail);
-                System.out.println("хвост содержит " + tail+"\n");
-            }else if(size == 1){
-                head = new Node<T>(data);
-                System.out.println("голова содержит тоже что и хвост " + head);
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + head +"\n");
-                head.next = tail;
-                tail.prev = head;
-                System.out.println("head.next = " + head.next);
+        public void insertBefore(T c) {
+            Node<T> temp = new Node<>(c);
+            if (!atBegin()) {
+                temp.prev = current.prev;
+                current.prev.next = temp;
+            } else {
+                head = temp;
             }
-            else {// в другом случае => если голова и хвост уже есть
-                Node<T> current = new Node<>(data);//головой становится новый элемент и в некст записывает ссылку на старую голову
-                current.next = head;
-                head = current;
-                size++;
-                System.out.println("добавлен "+ size + " элемент " + current +"\n");
-
-                System.out.println("head => "+ head);
-                System.out.println("tail => "+ tail);
-            }
+            current.prev = temp;
+            temp.next = current;
+            size++;
         }
 
         @Override
-        public T deleteCurrent() {//удаляет текущий элемент
-            if (isEmpty()) return null;
-            T tamp = (T) current.data;//сохраняем данные во временную переменную
-            current = current.next;//смещаем head вправо
-            size--;
-            return tamp;
+        public T deleteCurrent() {
+            T temp = current.data;
+            if (atBegin() && atEnd()) {
+                head = null;
+                tail = null;
+                reset();
+            } else if (atBegin()) {
+                head = current.next;
+                head.prev = null;
+                reset();
+            } else if (atEnd()) {
+                tail = current.prev;
+                tail.next = null;
+                current = current.next;
+            } else {
+                current.prev.next = current.next;
+                current.next.prev = current.prev;
+            }
+            return temp;
+
         }
-    }
+
+
+
+        }
+
+
+
     //дает доступ к итератору(вовзращает объект итератора)
     public LinkedListIterator iterator(){
         LinkedListIterator linkedListIterator = new LinkedListIterator();
