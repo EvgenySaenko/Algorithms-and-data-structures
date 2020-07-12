@@ -3,10 +3,123 @@ package lesson4.homework4;
 
 import lesson4.rightHomeWork.DoubleRelatedList;
 
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class DoublyLinkedList<T>{
+public class DoublyLinkedList<T> {
+
+    public class LinkedListIterator implements IteratorForDoublyLinkedList<T> {
+
+        private Node<T> current;
+
+        LinkedListIterator() {
+            this.current = head;
+        }
+
+//        private boolean listExists() {
+//            return iterator != null;
+//        }
+
+        @Override
+        public void reset() {//устанавливает себя на голову списка
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            this.current = head;
+        }
+
+        @Override
+        public T next() { //возвражает данные на текущем своем положении и перемещается в следующюю ячейку
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            current = current.next;
+            return (T) current.data;
+        }
+
+        @Override
+        public T getCurrent() {//возвращает текущий элемент
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            return (T) current.data;
+        }
+
+        @Override
+        public boolean hasNext() {//проверяет есть ли следующий элемент
+            //if (!listExists()) throw new RuntimeException("iterator is null");
+            if (current.next == null) {
+                return false;
+            }
+            return (current != null);
+        }
+
+        @Override
+        public boolean atEnd() { //проверяет находимся ли в конце списка(true or false)
+            //if (!listExists()) throw new RuntimeException("iterator is null");
+            return current.next == null;
+        }
+
+        @Override
+        public boolean atBegin() {
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            return current.prev == null;
+        }
+
+        @Override
+        public void insertAfter(T data) {//добавляет после текущего элемента
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            Node<T> temp = new Node<>(data);
+            if (!atEnd()) {
+                temp.next = current.next;
+                current.next.prev = temp;
+                System.out.println("temp.next " + temp.next);
+                System.out.println("current.next.prev " + current.next.prev);
+            } else {
+                tail = temp;
+                System.out.println("tail " + tail);
+            }
+            current.next = temp;
+            temp.prev = current;
+            size++;
+
+        }
+
+        @Override
+        public void insertBefore(T c) {
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            Node<T> temp = new Node<>(c);
+            if (!atBegin()) {
+                temp.prev = current.prev;
+                current.prev.next = temp;
+            } else {
+                head = temp;
+            }
+            current.prev = temp;
+            temp.next = current;
+            size++;
+        }
+
+        @Override
+        public T deleteCurrent() {
+           // if (!listExists()) throw new RuntimeException("iterator is null");
+            T temp = current.data;
+            if (atBegin() && atEnd()) {
+                head = null;
+                tail = null;
+                reset();
+            } else if (atBegin()) {
+                head = current.next;
+                head.prev = null;
+                reset();
+            } else if (atEnd()) {
+                tail = current.prev;
+                tail.next = null;
+                current = current.next;
+            } else {
+                current.prev.next = current.next;
+                current.next.prev = current.prev;
+            }
+            return temp;
+
+        }
+
+    }
 
     private class Node<T> {
 
@@ -35,7 +148,7 @@ public class DoublyLinkedList<T>{
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Node)) return false;
-            Node <?> node = (Node<?>) o;
+            Node<?> node = (Node<?>) o;
             return Objects.equals(data, node.data);
         }
 
@@ -44,22 +157,24 @@ public class DoublyLinkedList<T>{
             return Objects.hash(data);
         }
     }
+    ////////////////////DoublyLinkedList\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     private Node<T> head;
     private Node<T> tail;
     private int size;
 
-    DoublyLinkedList(){
+
+    DoublyLinkedList() {
         this.head = null;
         this.tail = null;
         this.size = 0;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return head == null;
     }
 
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 
@@ -134,117 +249,19 @@ public class DoublyLinkedList<T>{
         if (isEmpty()) return "[]";
         Node current = head;
         StringBuilder sb = new StringBuilder("[");
-        while(current != null){
+        while (current != null) {
             sb.append(current);//добавляем инфу о текущем узле
             current = current.next;//переключаемся
             sb.append((current == null) ? "]" : ",");//если переключились в нулевой узел закрываем скобку
         }
         return sb.toString();
     }
-    private class LinkedListIterator implements IteratorForDoublyLinkedList<T>{
 
-        private Node<T> current;
-
-        LinkedListIterator(){
-            this.current = head;
-        }
-
-        @Override
-        public void reset(){//устанавливает себя на голову списка
-                this.current = head;
-        }
-
-        @Override
-        public T next() { //возвражает данные на текущем своем положении и перемещается в следующюю ячейку
-            current = current.next;
-            return (T) current.data;
-        }
-
-        @Override
-        public T getCurrent() {//возвращает текущий элемент
-            return (T) current.data;
-        }
-
-        @Override
-        public boolean hasNext() {//проверяет есть ли следующий элемент
-            if (current.next == null){
-                return false;
-            }
-            return (current != null);
-        }
-
-        @Override
-        public boolean atEnd() { //проверяет находимся ли в конце списка(true or false)
-            return current.next == null;
-        }
-        @Override
-        public boolean atBegin() {
-            return current.prev == null;
-        }
-
-        @Override
-        public void insertAfter(T data) {//добавляет после текущего элемента
-            Node<T> temp = new Node<>(data);
-            if (!atEnd()) {
-                temp.next = current.next;
-                current.next.prev = temp;
-                System.out.println("temp.next " + temp.next);
-                System.out.println("current.next.prev " + current.next.prev);
-            } else {
-                tail = temp;
-                System.out.println("tail " + tail);
-            }
-            current.next = temp;
-            temp.prev = current;
-            size++;
-
-        }
-
-        @Override
-        public void insertBefore(T c) {
-            Node<T> temp = new Node<>(c);
-            if (!atBegin()) {
-                temp.prev = current.prev;
-                current.prev.next = temp;
-            } else {
-                head = temp;
-            }
-            current.prev = temp;
-            temp.next = current;
-            size++;
-        }
-
-        @Override
-        public T deleteCurrent() {
-            T temp = current.data;
-            if (atBegin() && atEnd()) {
-                head = null;
-                tail = null;
-                reset();
-            } else if (atBegin()) {
-                head = current.next;
-                head.prev = null;
-                reset();
-            } else if (atEnd()) {
-                tail = current.prev;
-                tail.next = null;
-                current = current.next;
-            } else {
-                current.prev.next = current.next;
-                current.next.prev = current.prev;
-            }
-            return temp;
-
-        }
-
-
-
-        }
 
 
 
     //дает доступ к итератору(вовзращает объект итератора)
-    public LinkedListIterator iterator(){
+    public LinkedListIterator iterator() {
         LinkedListIterator linkedListIterator = new LinkedListIterator();
         return linkedListIterator;
     }
