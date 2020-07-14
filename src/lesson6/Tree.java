@@ -4,8 +4,6 @@ import lesson4.Cat;
 
 public class Tree {
 
-    //travers
-    //delete
 
     private class TreeNode implements Comparable{
         private Cat c;
@@ -15,6 +13,8 @@ public class Tree {
         public TreeNode(Cat c){
             this.c = c;
         }
+
+
         @Override
         public String toString() {
             return "TreeNode{" +
@@ -27,9 +27,15 @@ public class Tree {
             if (!(o instanceof Cat)) throw  new ClassCastException("Not a cat");
             return c.getAge() - ((Cat) o).getAge();//от текущего отнимаем предыдущий
         }
-    }
 
+
+    }
     TreeNode root;//корень дерева
+
+
+    public boolean isEmpty(TreeNode node){
+        return node.left == null & node.right == null;
+    }
 
     //вставка элемента в дерево
     public void insert(Cat c){
@@ -73,9 +79,11 @@ public class Tree {
     //прямой порядок обхода дерева
     private void preOrderTraverse(TreeNode current){
         if (current != null){
-            System.out.println(current.c.getAge() + " ");
+            System.out.print(current.c.getAge() + " ");
             preOrderTraverse(current.left);
+            System.out.println("левый корень " + current.left);
             preOrderTraverse(current.right);
+
         }
     }
 
@@ -162,5 +170,41 @@ public class Tree {
             s.right = node.right;
         }
         return s;
+    }
+
+    //связка методов проверки сбалансировано ли дерево
+    public boolean checkBalance(TreeNode root){
+        int result = isBalanced(root);
+        if(result > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public int isBalanced(TreeNode root){//если нода null возвращаем 0
+        //System.out.println("root " + root);
+        if(root == null){
+           // System.out.println("root " + root);
+            return 0;
+        }
+
+        int leftDepth = isBalanced(root.left);//если нет, проверяем на null левого потомка
+       // System.out.println(leftDepth + " "+ root.left);
+        if(leftDepth == - 1){
+            return - 1;
+        }
+        int rightDepth = isBalanced(root.right);//если нет, проверяем на null правого потомка
+       // System.out.println(rightDepth + " " + root.right);
+        if(rightDepth == - 1){
+            return - 1;
+        }
+        //вычисляем разницу глубины левой и правой ветки у данного поддерева
+        int difference = leftDepth - rightDepth;
+        System.out.println(difference + " = " + " leftDepth " + leftDepth + " - " + " rightDepth " + rightDepth);
+        if(Math.abs(difference) > 1){//если разница в уровнях больше 1 то дерево не сбалансировано
+            return - 1;
+        }
+        return 1 + Math.max(leftDepth, rightDepth);//вернем максимальную глубину прибавим 1
     }
 }
