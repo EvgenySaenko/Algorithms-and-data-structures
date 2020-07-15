@@ -34,6 +34,10 @@ public class Tree {
     }
     TreeNode root;//корень дерева
 
+    public Tree (){
+
+    }
+
     public Tree (List<Integer> sampleData){
         for (int i = 0; i < sampleData.size(); i++) {
             insert(new Cat(sampleData.get(i),"Cat" + sampleData.get(i)));
