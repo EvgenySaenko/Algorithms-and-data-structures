@@ -2,6 +2,8 @@ package lesson6;
 
 import lesson4.Cat;
 
+import java.util.List;
+
 public class Tree {
 
 
@@ -32,6 +34,11 @@ public class Tree {
     }
     TreeNode root;//корень дерева
 
+    public Tree (List<Integer> sampleData){
+        for (int i = 0; i < sampleData.size(); i++) {
+            insert(new Cat(sampleData.get(i),"Cat" + sampleData.get(i)));
+        }
+    }
 
     public boolean isEmpty(TreeNode node){
         return node.left == null & node.right == null;
@@ -206,5 +213,28 @@ public class Tree {
             return - 1;
         }
         return 1 + Math.max(leftDepth, rightDepth);//вернем максимальную глубину прибавим 1
+    }
+
+    //связка методов проверки баланса дерева Преподавателя к классу MainTrees
+    public boolean isBalancedTrees(boolean precision){
+        return Math.abs(countDepth(root.left) - countDepth(root.right))
+                <= ((precision) ? 0 : 1);
+    }
+
+    private int countDepth(TreeNode node){
+        if (node == null) return 0;
+
+        int left = 0;
+        int right = 0;
+
+        if (node.left != null){
+            left = countDepth(node.left);
+        }
+
+        if (node.right != null){
+            left = countDepth(node.right);
+        }
+
+        return 1 + ((left > right) ? left : right);
     }
 }
