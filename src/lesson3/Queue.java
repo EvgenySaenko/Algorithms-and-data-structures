@@ -93,6 +93,6 @@ public class Queue {
         int temp = queue[head++];
         head %= capacity;//if(head ==capacity) head = 0;
         items--;
-        return queue[head++];
+        return temp;
     }
 }
